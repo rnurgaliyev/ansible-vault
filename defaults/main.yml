@@ -1,0 +1,4 @@
+---
+
+vault_bind_address: "{{ ansible_default_ipv4.address }}"
+vault_ui: True
