@@ -1,0 +1,13 @@
+---
+
+- name: Create vault configuration directory
+  file:
+    dest: "{{ vault_configuration_path }}"
+    state: directory
+
+- name: Install vault configuration
+  copy:
+    content: "{{ item.configuration | to_json }}"
+    dest: "{{ vault_configuration_path }}/{{ item.name }}.json"
+  loop: "{{ vault_configuration }}"
+  notify: restart vault

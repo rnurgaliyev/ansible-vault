@@ -1,12 +1,10 @@
 [Unit]
 Description=Vault
-StartLimitIntervalSec=0
 
 [Service]
 User=root
 Restart=always
-RestartSec=5
-ExecStart=/usr/sbin/vault server -config /etc/vault.d
+ExecStart={{ vault_install_path }}/vault server -config={{ vault_configuration_path }}
 
 [Install]
 WantedBy=multi-user.target

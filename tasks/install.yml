@@ -1,0 +1,61 @@
+---
+
+- name: Install prerequsistes
+  apt:
+    pkg:
+      - gpg
+      - unzip
+
+- name: Download vault SHA256 checksums
+  get_url:
+    url: "https://releases.hashicorp.com/vault/{{ vault_install_version }}/vault_{{ vault_install_version }}_SHA256SUMS"
+    dest: "/tmp"
+  register: checksums
+
+- name: Download vault SHA256 checksums signature
+  get_url:
+    url: "https://releases.hashicorp.com/vault/{{ vault_install_version }}/vault_{{ vault_install_version }}_SHA256SUMS.sig"
+    dest: "/tmp"
+  register: signature
+
+- name: Download vault archive
+  get_url: 
+    url: "https://releases.hashicorp.com/vault/{{ vault_install_version }}/vault_{{ vault_install_version }}_linux_amd64.zip"
+    dest: "/tmp"
+  register: archive
+
+- name: Get hashicorp gpg key
+  command: "gpg --recv-keys {{ vault_hashicorp_gpg_key_id }}"
+  register: result
+  changed_when: "'imported: 1' in result.stderr"
+
+- name: Verify hashicorp signature
+  command: "gpg --verify {{ signature.dest }} {{ checksums.dest }} "
+  register: signature_check
+  changed_when: False
+
+- name: Check signature fingerprint
+  assert:
+    that:
+      - "'good signature' in signature_check.stderr|lower"
+      - "vault_hashicorp_gpg_key_fingerprint in signature_check.stderr|replace(' ','')"
+    fail_msg: "Signature check failed"
+
+- name: Get archive SHA256 hash
+  stat:
+    path: "{{ archive.dest }}"
+    checksum_algorithm: sha256
+  register: archive
+
+- name: Check archive SHA256 hash
+  command: "grep -i '^{{ archive.stat.checksum }}\\s\\+{{ archive.stat.path | basename }}$' {{ checksums.dest }}"
+  changed_when: False
+  register: check
+
+- name: Unpack vault binary
+  unarchive:
+    remote_src: True
+    src: "{{ archive.stat.path }}"
+    dest: "{{ vault_install_path }}"
+    mode: 0755
+  notify: restart vault
