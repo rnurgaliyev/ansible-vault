@@ -1,4 +1,42 @@
 ---
 
-vault_bind_address: "{{ ansible_default_ipv4.address }}"
-vault_ui: True
+# vault_install controls if role should try to install vault.
+# vault_install_version controls which version should be installed, and
+# can be set to 'latest'. In this case, role will fetch latest vault version
+# according to hashicorp software versioning REST API.
+vault_install: True
+vault_install_version: latest
+
+# Note if you wish to install specific version, not to include 'v' in version
+# number. For example:
+# vault_install_version: 1.1.1
+
+# vault_configure controls if vault should be configured.
+vault_configure: True
+
+# vault_configuration is a list of vault configurations. Every item
+# will be deployed to vault configuration directory as a separate json file.
+# Content of configuration key will be translated to json.
+#
+# Following example will create one file,
+# /etc/vault.d/global.json
+
+# vault_configuration:
+#   - name: server
+#     configuration:
+#       ui: True
+#       storage:
+#         consul:
+#           address: "127.0.0.1:8500"
+#           path: "vault/"
+#       listener:
+#         - tcp:
+#             address: "127.0.0.1:8200"
+#             tls_disable: 1
+#         - tcp:
+#             address: "{{ ansible_default_ipv4.address }}:8200"
+#             tls_disable: 1
+#       api_addr: "http://{{ ansible_default_ipv4.address }}:8200"
+#       cluster_addr: "http://{{ ansible_default_ipv4.address }}:8201"
+
+vault_configuration:

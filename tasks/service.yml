@@ -1,0 +1,9 @@
+---
+
+- name: Install vault systemd service
+  template:
+    src: vault.service
+    dest: "/etc/systemd/system/vault.service"
+  notify:
+    - reload systemd
+    - restart vault

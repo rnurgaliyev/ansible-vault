@@ -1,0 +1,6 @@
+---
+
+vault_install_path: "/usr/bin"
+vault_configuration_path: "/etc/vault.d"
+vault_hashicorp_gpg_key_id: "51852D87348FFC4C"
+vault_hashicorp_gpg_key_fingerprint: "91A6E7F85D05C65630BEF18951852D87348FFC4C"

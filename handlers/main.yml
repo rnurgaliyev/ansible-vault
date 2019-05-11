@@ -4,6 +4,8 @@
   service:
     name: vault
     state: restarted
+    enabled: True
 
 - name: reload systemd
-  systemd: daemon_reload=yes
+  systemd:
+    daemon_reload: True

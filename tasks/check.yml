@@ -1,0 +1,26 @@
+---
+
+- name: Get installed vault version
+  shell: >
+    {{ vault_install_path }}/vault --version | sed -E 's/^Vault\s+v([0-9.]+)\s.*$/\1/g'
+  changed_when: False
+  ignore_errors: True
+  register: vault_installed_version
+  check_mode: False
+
+- set_fact:
+    vault_installed_version: "{{ vault_installed_version.stdout }}"
+
+- name: Get latest vault version
+  shell: > 
+    curl --silent https://releases.hashicorp.com/vault/ | grep -o 'vault_[0-9.]\+' | sort -h -r | head -n 1 | sed -e 's/vault_//g'
+  args:
+    warn: False
+  changed_when: False
+  register: vault_version_response
+  when: vault_install_version == 'latest'
+
+- set_fact:
+    vault_install_version: "{{ vault_version_response.stdout }}"
+  when: 
+    - vault_version_response.stdout is defined
