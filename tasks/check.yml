@@ -13,7 +13,7 @@
 
 - name: Get latest vault version
   shell: > 
-    curl --silent https://releases.hashicorp.com/vault/ | grep -o 'vault_[0-9.]\+' | sort -V -r | head -n 1 | sed -e 's/vault_//g'
+    curl --silent https://releases.hashicorp.com/vault/ | grep -Ev 'rc|beta' | grep -Eo 'vault_[0-9.]+' | sort -V -r | head -n 1 | sed -e 's/vault_//g'
   args:
     warn: False
   changed_when: False
