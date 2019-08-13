@@ -5,6 +5,7 @@
     pkg:
       - gpg
       - unzip
+    force_apt_get: True
 
 - name: Download vault SHA256 checksums
   get_url:
