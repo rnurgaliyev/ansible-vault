@@ -2,17 +2,17 @@
 
 - name: Check installed and desired vault versions
   include_tasks: check.yml
-  when: vault_install
+  when: vault_install|bool
 
 - name: Install vault
   include_tasks: install.yml
   when:
-    - vault_install
+    - vault_install|bool
     - vault_installed_version != vault_install_version
 
 - name: Configure vault
   include_tasks: configure.yml
-  when: vault_configure
+  when: vault_configure|bool
 
 - name: Configure vault agent service
   include_tasks: service.yml
